@@ -34,7 +34,7 @@ app.post("/createApiUser", async (req, res) => {
       if(err) throw err;
   })
   if(user_email) {
-    // res.status(422).send("User Already Exists with")
+    res.status(422)
   }
   else {
     db.query(`INSERT INTO users SET ?`, users, err => {
