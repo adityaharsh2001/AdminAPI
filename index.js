@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const users = [];
+const { v4: uuidv4 } = require('uuid');
 const express = require("express");
 require("dotenv").config();
 const app = express();
@@ -10,35 +10,41 @@ const {
   generateAccessToken,
   generateRefreshToken,
 } = require("./controllers/generateToken");
-// const validateToken = require("./middlewares/validateToken")
+const validateToken = require("./middlewares/validateToken");
 let refreshTokens = [];
+const Connectdb = require("./db/db");
+const db = Connectdb();
 app.use(
   BodyParser.urlencoded({
     extended: true,
   })
 );
+
 app.use(BodyParser.json());
 app.post("/createApiUser", async (req, res) => {
   const user = req.body.name;
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
-  users.push({ user: user, password: hashedPassword });
+  const email = req.body.email;
+  const total_order = req.body.total_order;
+//   const created_at = new Date.toDateString();
+  //   users.push({ user: user, password: hashedPassword });
+  const users = { user_id: uuidv4(), user_name: user, user_email: email, user_password: hashedPassword,  total_order: total_order};
+  var sql = "SELECT user_email FROM users HAVING user_email"
+  const user_email = db.query(sql, email, err => {
+      if(err) throw err;
+  })
+  if(user_email) {
+    // res.status(422).send("User Already Exists with")
+  }
+  else {
+    db.query(`INSERT INTO users SET ?`, users, err => {
+        if(err) throw err;
+        console.log("user added")
+    })
+  }
   res.status(201).send(users);
   console.log(users);
 });
-
-function validateToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader.split(" ")[1];
-  if (token == null) res.sendStatus(400).send("Token not present");
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) {
-      res.status(403).send("Token invalid");
-    } else {
-      req.user = user;
-      next();
-    }
-  });
-}
 
 app.post("/login", async (req, res) => {
   const user = users.find((c) => c.user == req.body.name);
@@ -71,7 +77,7 @@ app.get("/posts", validateToken, (req, res) => {
   res.send(`${req.user.user} successfully accessed post`);
 });
 
-app.use(express.json()); 
+app.use(express.json());
 const port = process.env.TOKEN_SERVER_PORT;
 app.listen(port, () => {
   console.log(`Authorization Server running on ${port}...`);
