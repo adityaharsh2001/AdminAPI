@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt-nodejs');
 const jwt = require("jsonwebtoken");
 const {jwtOptions} = require('../config/jwtOptions');
 const {v4:uuidv4} = require("uuid")
-
+const uploadFile = require("../middleware/upload")
 //function to add a user
 const createUser = async ({ user_name , total_order, user_email , user_password, user_id, user_image }) => {
     return await User.create({ user_name , total_order,  user_email , user_password, user_id, user_image });
@@ -49,7 +49,7 @@ router.post('/login', async function(req, res, next) {
 });
 
 //register a new user
-router.post('/insert', async  function(req, res, next) {
+router.post('/insert', uploadFile.single('image'), async (req, res, next) => {
 
     const user = await getUser({user_email : req.body.user_email});
 
