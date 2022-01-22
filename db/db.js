@@ -5,13 +5,13 @@ const Connectdb = () => {
         host: "localhost",
         user: "root",
         password: "",
-        database: "quadB"
+        database: "quadB2"
       });
       
       db.connect(function(err) {
         if (err) throw err;
         console.log("Connected to SQL DATABASE");
-        db.query("CREATE DATABASE IF NOT EXISTS quadB", function (err, result) {
+        db.query("CREATE DATABASE IF NOT EXISTS quadb2", function (err, result) {
           if (err) throw err;
         });
       });

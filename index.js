@@ -26,39 +26,42 @@ app.post("/createApiUser", async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
   const email = req.body.email;
   const total_order = req.body.total_order;
-//   const created_at = new Date.toDateString();
-  //   users.push({ user: user, password: hashedPassword });
   const users = { user_id: uuidv4(), user_name: user, user_email: email, user_password: hashedPassword,  total_order: total_order};
-  var sql = "SELECT user_email FROM users HAVING user_email"
-  const user_email = db.query(sql, email, err => {
-      if(err) throw err;
-  })
-  if(user_email) {
-    res.status(422)
-  }
-  else {
-    db.query(`INSERT INTO users SET ?`, users, err => {
+
+  db.query(`SELECT user_email FROM quadb2.users WHERE user_email ='${email}';
+  ` , function (err, result, fields) {
+    if (err) throw err;
+    var resultArray = Object.values(JSON.parse(JSON.stringify(result)))
+    // console.log(resultArray[0]);
+    if(!resultArray[0]) {
+      db.query(`INSERT INTO users SET ?`, users, err => {
         if(err) throw err;
         console.log("user added")
     })
-  }
-  res.status(201).send(users);
-  console.log(users);
+    res.status(201).send(users);
+    }
+    else {
+      res.status(422).send(`${resultArray[0].user_email} already exists`)
+    }
+  });
+    //  console.log(users);
 });
 
 app.post("/login", async (req, res) => {
-  const user = users.find((c) => c.user == req.body.name);
+//   const user = users.find((c) => c.user == req.body.name);
   //check to see if the user exists in the list of registered users
-  if (user == null) res.status(404).send("User does not exist!");
-  //if user does not exist, send a 400 response
-  if (await bcrypt.compare(req.body.password, user.password)) {
-    const accessToken = generateAccessToken({ user: req.body.name });
-    const refreshToken = generateRefreshToken({ user: req.body.name });
-    refreshTokens.push(refreshToken);
-    res.json({ accessToken: accessToken, refreshToken: refreshToken });
-  } else {
-    res.status(401).send("Password Incorrect!");
-  }
+//   if (user == null) res.status(404).send("User does not exist!");
+//   //if user does not exist, send a 400 response
+//   if (await bcrypt.compare(req.body.password, user.password)) {
+//     const accessToken = generateAccessToken({ user: req.body.name });
+//     const refreshToken = generateRefreshToken({ user: req.body.name });
+//     refreshTokens.push(refreshToken);
+//     res.json({ accessToken: accessToken, refreshToken: refreshToken });
+//   } else {
+//     res.status(401).send("Password Incorrect!");
+//   }
+
+// res.send(user)
 });
 
 app.post("/refreshToken", (req, res) => {
