@@ -1,31 +1,58 @@
-
-const express = require("express");
-require("dotenv").config();
+const express = require('express');
 const app = express();
-app.use(express.json());
-const BodyParser = require("body-parser");
-const validateToken = require("./middlewares/validateToken");
-const {Connectdb, db} = require("./db/db");
-Connectdb();
-app.use(
-  BodyParser.urlencoded({
-    extended: true,
-  })
-);
-const AuthRouter = require("./routes/authRoute")
+const User = require('./models/User');
+const checkAuth = require('./middleware/checkAuth');
+const userRoutes = require('./routes/user');
+const authRoutes = require('./routes/auth');
+const passport = require('passport');
+const strategy = require('./config/jwtOptions');
+const bodyParser = require('body-parser');
 
-app.use(BodyParser.json());
+// configuration of the rest API
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
 
-app.use("/auth", AuthRouter)
-
-app.get("/posts", validateToken, (req, res) => {
-  console.log("Token is valid");
-  console.log(req.user.user);
-  res.send(`${req.user.user} successfully accessed post`);
+    if (req.method === "OPTIONS") {
+        res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+        return res.status(200).json({});
+    }
+    next();
 });
 
-app.use(express.json());
-const port = process.env.TOKEN_SERVER_PORT;
-app.listen(port, () => {
-  console.log(`Authorization Server running on ${port}...`);
-});
+
+
+// Database
+const db = require('./config/database');
+
+// Test DB
+db.authenticate()
+    .then(() => console.log('Database connected...'))
+    .catch(err => console.log('Error: ' + err));
+
+User.sync()
+    .then(() => console.log('User table created successfully'))
+    .catch(err => console.log('User table not created,  error'));
+
+
+// parse application/json
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+
+// use the strategy
+passport.use("strategy" , strategy);
+
+
+app.use('/auth', authRoutes);
+
+app.use('/user', userRoutes);
+
+
+app.listen(3000, function() {
+    console.log('Express is running on port 3000');
+  });
