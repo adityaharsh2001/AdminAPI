@@ -1,20 +1,19 @@
 var mysql = require('mysql');
-
+var db = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "quadB2"
+});
 const Connectdb = () => {
-    var db = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "quadB2"
-      });
       
-      db.connect(function(err) {
-        if (err) throw err;
-        console.log("Connected to SQL DATABASE");
-        db.query("CREATE DATABASE IF NOT EXISTS quadb2", function (err, result) {
-          if (err) throw err;
-        });
-      });
+      // db.connect(function(err) {
+      //   if (err) throw err;
+      //   console.log("Connected to SQL DATABASE");
+      //   db.query("CREATE DATABASE IF NOT EXISTS quadb2", function (err, result) {
+      //     if (err) throw err;
+      //   });
+      // });
 
       let sql = `CREATE TABLE IF NOT EXISTS users(
         user_id varchar(255),
@@ -31,9 +30,8 @@ const Connectdb = () => {
         console.log("Table Created")
     })
 
-    return db;
+    // return db;
 }
 
-module.exports = 
-    Connectdb
+module.exports = { Connectdb, db }
 
