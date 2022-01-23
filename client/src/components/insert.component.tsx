@@ -35,13 +35,12 @@ const SignUp = () => {
         data: bodyFormData,
         headers: { "Content-Type": "multipart/form-data" },
       })
-        .then(function (response) {
-      
+        .then( (response) => {
           console.log(response);
         })
-        .catch(function (response) {
+        .catch((err) => {
       
-          console.log(response);
+          console.log(err);
         });
     
   };

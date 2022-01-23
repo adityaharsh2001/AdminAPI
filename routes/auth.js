@@ -23,7 +23,8 @@ const getUser = async obj => {
 // login
 router.post('/login', async function(req, res, next) {
     
-    const { user_email, user_password } = req.body;
+    const user_email = req.body.user_email
+    const user_password = req.body.user_password
     
     if (user_email && user_password) {
         let user = await getUser({ user_email: user_email });
