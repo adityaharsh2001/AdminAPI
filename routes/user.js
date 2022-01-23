@@ -7,11 +7,7 @@ const getAllUsers = async () => {
     return await User.findAll();
 };
 
-const getUser = async obj => {
-    return await User.findOne({
-        where: obj,
-    });
-};
+
 
 router.get('/details', (req, res) =>{
     getAllUsers().then(user => res.json(user));
@@ -36,6 +32,9 @@ router.delete('/delete', checkAuth, (req, res) => {
                 res.send(err)
             });
     })
+router.get('/image', checkAuth, (req, res) => {
+    res.send(req.userData.user.user_image);
+})
     
 
 

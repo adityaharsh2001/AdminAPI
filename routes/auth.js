@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const {jwtOptions} = require('../config/jwtOptions');
 const {v4:uuidv4} = require("uuid")
 const uploadFile = require("../middleware/upload")
+var bodyParser = require('body-parser');
+
 //function to add a user
 const createUser = async ({ user_name , total_order, user_email , user_password, user_id, user_image }) => {
     return await User.create({ user_name , total_order,  user_email , user_password, user_id, user_image });
@@ -52,10 +54,9 @@ router.post('/login', async function(req, res, next) {
 router.post('/insert', uploadFile.single('image'), async (req, res, next) => {
 
     const user = await getUser({user_email : req.body.user_email});
-
+    console.log(req.file)
     if(user)
     return   res.status(409).json({message : 'user_email already exists'});
-
     bcrypt.hash(req.body.user_password , null , null, (err, hash) => {
 
         createUser({
@@ -64,7 +65,7 @@ router.post('/insert', uploadFile.single('image'), async (req, res, next) => {
             total_order: req.body.total_order,
             user_email : req.body.user_email ,
             user_password : hash ,
-            user_image: req.file.filename,
+            // user_image: req.file.filename,
         }).then(user =>
             res.status(200).json({ user, msg: 'account created successfully' }) );
     })

@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 });
 
 
-
+app.use('/static', express.static('static'))
 // Database
 const db = require('./config/database');
 
@@ -54,5 +54,5 @@ app.use('/user', userRoutes);
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, function() {
-    console.log('Express is running on port 3000');
+    console.log(`Express is running on port ${PORT}`);
   });
