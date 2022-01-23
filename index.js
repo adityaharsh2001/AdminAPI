@@ -52,7 +52,7 @@ app.use('/auth', authRoutes);
 
 app.use('/user', userRoutes);
 
-
-app.listen(3000, function() {
+const PORT = process.env.PORT || 5000
+app.listen(PORT, function() {
     console.log('Express is running on port 3000');
   });
