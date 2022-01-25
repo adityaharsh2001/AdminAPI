@@ -5,7 +5,7 @@ import './index.css';
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import SignUp from './components/insert.component'
 import Login from './components/login.component'
-
+import Details from './components/details.component'
 function App() {
   return (<Router>
     <div className="App">
@@ -31,7 +31,8 @@ function App() {
             <Route path='/' element={<Login/>}></Route>
             <Route path='/sign-in' element={<Login/>}></Route>
             <Route path='/sign-up' element={<SignUp/>}></Route>
-
+            <Route path='/details' element={<Details/>}></Route>
+            
           </Routes>
         </div>
       </div>

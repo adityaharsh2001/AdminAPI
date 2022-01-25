@@ -1,19 +1,23 @@
 import React, { Component } from "react";
 import axios from "axios"
-const initialFormData = Object.freeze({
+const initialFormData = {
   user_name: "",
   user_password: "",
   user_email: "",
-  order_total: "",
-  user_image: "",
-});
+  total_order: "",
+  image: null
+};
 
 
 const SignUp = () => {
   const [formData, updateFormData] = React.useState(initialFormData);
   var bodyFormData = new FormData();
   const handleFileInput = (e) => {
-    bodyFormData.append('image', e)
+    updateFormData({
+      ...FormData,
+      [e.target.name]: e.target.files[0]
+    })
+
   }
   const handleChange = (e) => {
     updateFormData({
@@ -24,14 +28,13 @@ const SignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
     for ( var key in formData ) {
         bodyFormData.append(key, formData[key]);
     }
     console.log(bodyFormData)
     axios({
         method: "post",
-        url: "http://localhost:5000/auth/insert",
+        url: "/api/auth/insert",
         data: bodyFormData,
         headers: { "Content-Type": "multipart/form-data" },
       })
@@ -86,7 +89,7 @@ const SignUp = () => {
           type="text"
           className="form-control"
           placeholder="Total Order"
-          name="order_total"
+          name="total_order"
           onChange={handleChange}
         />
       </div>

@@ -66,7 +66,7 @@ router.post('/insert', uploadFile.single('image'), async (req, res, next) => {
             total_order: req.body.total_order,
             user_email : req.body.user_email ,
             user_password : hash ,
-            // user_image: req.file.filename,
+            user_image: `/api/${req.file.path}`,
         }).then(user =>
             res.status(200).json({ user, msg: 'account created successfully' }) );
     })
