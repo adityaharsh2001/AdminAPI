@@ -13,7 +13,7 @@ var storage = multer.diskStorage({
     cb(null, 'static/assests/uploads');
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+    cb(null, `${Date.now()}-${file.originalname.trim()}`);
   },
 });
 

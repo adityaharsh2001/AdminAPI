@@ -2,7 +2,7 @@ const express = require('express');
 const checkAuth = require('../middleware/checkAuth');
 const router = express.Router();
 const User = require('../models/User');
-
+const path = require('path');
 const getAllUsers = async () => {
     return await User.findAll();
 };
@@ -11,6 +11,30 @@ const getAllUsers = async () => {
 
 router.get('/details', (req, res) =>{
     getAllUsers().then(user => res.json(user));
+});
+
+const getUser = async obj => {
+    return await User.findOne({
+        where: obj,
+        attributes: ['user_image']
+    });
+};
+
+
+router.get('/image/:id', async (req, res) =>{
+    // console.log(req.params.id)
+    var options = {
+        root: path.join(__dirname, "../")
+    };
+    const user = await getUser({user_id: req.params.id})
+    console.log(user)
+    res.sendFile(user.user_image, options, err => {
+        if (err) {
+            console.log(err)
+        }
+    })
+    // res.sendFile("1643123092942-176.jpeg")
+    // console.log(options)
 });
 
 router.put('/update', checkAuth, (req, res) => {
